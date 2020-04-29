@@ -1,0 +1,212 @@
+{% extends "orders/layout.html" %}
+
+{% block title %}
+M&Y Pizza registration
+{% endblock %}
+{% block head %}
+{% endblock %}
+{% block body %}
+
+<script>
+var is_username_taken = false;
+document.addEventListener('DOMContentLoaded', () => {
+
+      document.querySelector('#next').onclick = ()  => {
+        if (checkEmpty()) {
+          document.querySelector("#valid_text").style.visibility = "hidden";
+          if (checkEmail()) {
+            if (!is_username_taken) {
+              document.querySelector("#firstdata").style.display = "none";
+              document.querySelector("#seconddata").style.display = "";
+            }
+            else {
+              document.querySelector("#valid_username").style.visibility = "visible";
+              document.querySelector("#valid_username").innerHTML = "Username exist";
+
+            }
+        }
+      };
+      document.querySelector("#registerBtn").onclick = () => {
+        if (validPass()) {
+          if (checkPass()) {
+            document.querySelector("#loginForm").submit();
+          }
+        }
+      };
+
+      document.querySelector("#password").onkeyup = () =>{
+        validPass();
+      }
+
+      //return false if somthing empty, else return true
+      function checkEmpty(){
+        const username = document.querySelector("#username").value;
+        const fname = document.querySelector("#fname").value;
+        const lname = document.querySelector("#lname").value;
+        const email = document.querySelector("#email").value;
+        if(username == "" || fname == "" || lname == "" || email == ""){
+          document.querySelector("#valid_text").innerHTML ="You have to fill all fileds!";
+          document.querySelector("#valid_text").style.visibility = "visible";
+          document.querySelector("#next").className = "btn btn-outline-danger";
+          return false;
+        }
+        return true;
+      };
+      //return true if email is real
+      function checkEmail(){
+        if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(document.querySelector("#email").value))
+       {
+         return true;
+       }
+       document.querySelector("#valid_text").innerHTML ="Email is incorrect!";
+       document.querySelector("#valid_text").style.visibility = "visible";
+       document.querySelector("#next").className = "btn btn-outline-danger";
+         return false;
+      };
+      //return treu if the pass and pass2 are equal and not empty.
+      function checkPass(){
+        const pass = document.querySelector("#password").value;
+        const pass2 = document.querySelector("#password2").value;
+        if (pass == "" || pass2 == "") {
+          document.querySelector("#valid_pass").style.visibility = "visible";
+          document.querySelector("#valid_pass").innerHTML = "Password can't be empty!";
+          return false;
+        }
+        else{
+          document.querySelector("#valid_pass").style.visibility = "hidden";
+        }
+        if (pass != pass2) {
+          document.querySelector("#valid_pass").style.visibility = "visible";
+          document.querySelector("#valid_pass").innerHTML = "Password not confirm";
+          document.querySelector("#password2").style.borderColor = "red";
+          return false;
+        }
+        return true;
+      };
+      // return true if pass is in the value to django user acount.
+      function validPass(){
+        const pass = document.querySelector("#password").value;
+        var valid = true;
+        if (pass.length < 8) {
+          document.querySelector("#min").className = "red";
+          valid = false;
+        }
+        else{
+          document.querySelector("#min").className = "green";
+        }
+        var thereLow = false;
+        var thereUp = false;
+        var thereNum = false;
+        var hasNumber = /\d/;
+        for (var i = 0; i < pass.length; i++) {
+          var character = pass[i];
+          if (hasNumber.test(character)) {
+            thereNum = true;
+          }
+          else if (character == character.toUpperCase()) {
+            thereUp = true;
+          }
+          else if(character == character.toLowerCase()){
+            thereLow = true;
+          }
+        }
+        if (!thereLow) {
+          document.querySelector("#low").className = "red";
+          valid = false;
+        }else {
+            document.querySelector("#low").className = "green";
+        }
+        if (!thereUp) {
+          document.querySelector("#up").className = "red";
+          valid = false;
+        }else {
+            document.querySelector("#up").className = "green";
+        }
+        if (!thereNum) {
+          document.querySelector("#num").className = "red";
+          valid = false;
+        }else {
+            document.querySelector("#num").className = "green";
+        }
+        return valid;
+      }
+
+}
+    });
+    function userisexist(){
+      if (document.querySelector("#username").value != "") {
+        validUsername(document.querySelector("#username").value);
+      }
+      else {
+        document.querySelector("#valid_username").innerHTML = "you have to fill username";
+        document.querySelector("#valid_username").style.visibility = "visible";
+      }
+    }
+    function validUsername(username){
+        $.ajax({
+       url: 'validUserName',
+       data: {
+         'username': username
+       },
+       dataType: 'json',
+       success: function (data) {
+         if (data.is_taken) {
+           is_username_taken = true;
+         }
+         else {
+           is_username_taken = false;
+         }
+       }
+     });
+   }
+</script>
+
+<div class="center_div" style="width:45%;">
+  <h3 align="center">Registration to M&Y Pizza</h3>
+  <form class="" id="loginForm" action="{% url 'register' %}" method="post" style="width:100%;">
+  {% csrf_token %}
+  <div class="" id="firstdata">
+    <div class="center_div">
+      Username:
+      <input type="text" class="form-control" name="username" onblur="userisexist()" id="username" value="" style="width:100%;">
+      <small style="visibility:hidden;color:red;" id="valid_username"></small>
+    </div>
+    <div class="center_div">
+      First name:
+      <input type="text" class="form-control" name="fname" id="fname" value="" style="width:100%;">
+    </div>
+    <div class="center_div">
+      Last name:
+      <input type="text" class="form-control" name="lname" id="lname" value="" style="width:100%;">
+    </div>
+    <div class="center_div">
+      Email:
+      <input type="email" class="form-control" name="email" id="email" value="" style="width:100%;">
+    </div>
+    <small style="visibility:hidden;color:red;" id="valid_text"></small>
+    <div class="">
+      <button type="button" class="btn btn-outline-info" style="margin-left:auto;margin-right:auto;display:flex;margin-top:10px;" name="next" id="next">Next!</button>
+    </div>
+  </div>
+  <div class="" id="seconddata" style="display:none;">
+    <div class="center_div">
+      Password:
+      <input type="password" class="form-control" name="password" id="password" value="" style="width:100%;">
+    </div>
+    <div class="center_div">
+      Confirm password:
+      <input type="password" class="form-control" name="password2" id="password2" value="" style="width:100%;">
+    </div>
+    <small  id="passtext">Password must contain:<small id="up" class="red">Uppercase</small>,<small class="red" id="low">Lowercase</small>,<small class="red" id="num">Numbers</small>, <small class="red" id="min">Min 8 charecter</small></small>
+    <br>
+    <small style="visibility:hidden;color:red;" id="valid_pass"></small>
+    <div class="center_div">
+      <button type="button" class="btn btn-outline-primary" style="margin-left:auto;margin-right:auto;display:flex;margin-top:10px;" name="registerBtn" id="registerBtn">Sign Up!</button>
+    </div>
+  </div>
+</form>
+</div>
+<script>
+
+</script>
+{% endblock %}

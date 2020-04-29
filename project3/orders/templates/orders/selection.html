@@ -1,0 +1,244 @@
+{% extends "orders/layout.html" %}
+
+{% block title %}
+M&Y Pizza selection
+{% endblock %}
+{% block head %}
+{% endblock %}
+{% block body %}
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  var limit = 0;
+  var topps = [];
+  var islg = true;
+  document.addEventListener('click', event => {
+    const element = event.target;
+    if (element.name === 'menubtn') {
+      var id = element.id;
+      if (document.getElementById(id+"lg").checked == true || document.getElementById(id+"sm").checked == true) {
+        element.className = 'btn btn-outline-success';
+        document.getElementById(id+"text").style.visibility = "hidden";
+        var typename = document.getElementById("titleType").innerHTML;
+          if(document.getElementById(id+"lg").checked == true){
+            islg = true;
+            if (typename.includes("pizza")) {
+
+              var val = element.value;
+              var r = /\d+/;
+              if (val.match(r) != null){
+                 limit = val.match(r);
+                document.querySelector("#menusdiv").style.display = "none";
+                document.querySelector("#toppings").style.display = "grid";
+                document.querySelector("#titletoppings").innerHTML = "Sellect "+limit+" toppings please...";
+                document.querySelector("#menutitle").innerHTML = "large "+val;
+                document.querySelector("#menutitle").value = id;
+              }
+              else {
+                addMenuOrder(id,"true");
+              }
+            }
+            else {
+              addMenuOrder(id,"true");
+            }
+          }
+          else{
+            islg = false;
+            if (typename.includes("pizza")) {
+              var val = element.value;
+              var r = /\d+/;
+              if (val.match(r) != null){
+                 limit = val.match(r);
+                document.querySelector("#menusdiv").style.display = "none";
+                document.querySelector("#toppings").style.display = "grid";
+                document.querySelector("#titletoppings").innerHTML = "Sellect "+limit+" toppings please...";
+                document.querySelector("#menutitle").innerHTML = "small "+ val;
+                document.querySelector("#menutitle").value = id;
+              }
+              else {
+                addMenuOrder(id,"false");
+              }
+            }
+            else {
+              addMenuOrder(id,"false");
+            }
+          }
+      }
+      else{
+        document.getElementById(id+"text").style.visibility = "visible";
+        document.getElementById(id+"text").innerHTML = "L or S?";
+      }
+    }
+    if (element.name === 'menubtnlg') {
+      var id = element.id;
+      element.className = 'btn btn-outline-success';
+      addMenuOrder(id,"true");
+    }
+
+    if (element.name === 'toppingbox') {
+      var topid = element.id;
+      var len = $('#toppings').find('input[type="checkbox"]:checked').length;
+      if (len > limit) {
+        alert("you can sellect only "+limit+" toppings!")
+        element.checked = false;
+      }
+      else{
+        if (element.checked === false) {
+            const index = topps.indexOf(topid);
+            if (index > -1) {
+              topps.splice(index, 1);
+            }
+          }
+
+        else{
+          topps.push(topid);
+      }
+
+    }
+  }
+  });
+
+
+  document.querySelector("#pizzaAdd").onclick = ()  => {
+    var len = $('#toppings').find('input[type="checkbox"]:checked').length;
+    if(limit > len){
+      let x = limit-len;
+      alert("sellect "+x+" more toppings");
+    }
+    else if (limit == len) {
+      var id = document.querySelector("#menutitle").value;
+      if (islg) {
+        AddPizzaOrder(id,"true",topps);
+        topps = [];
+      }
+      else {
+        AddPizzaOrder(id,"false",topps);
+        topps = [];
+      }
+
+    }
+  }
+
+});
+function addMenuOrder(menuid,islg){
+    $.ajax({
+   url: 'http://127.0.0.1:8000/addMenutoOrder',
+   data: {
+     'menuid':menuid,
+     'islg':islg
+   },
+   dataType: 'json',
+   success: function (data) {
+     if (data.menuadded) {
+       document.getElementById("items").style.visibility = "visible";
+       document.querySelector("#menusdiv").style.display = "grid";
+       document.querySelector("#toppings").style.display = "none";
+
+     }
+   },
+   error: function () {
+     alert('errorrrrrrr in adding oreder');
+   }
+ });
+}
+
+function AddPizzaOrder(menuid,islg,toppings){
+    $.ajax({
+   url: 'http://127.0.0.1:8000/AddPizzaOrder',
+   data: {
+     'menuid':menuid,
+     'islg':islg,
+     'toppings':JSON.stringify(toppings)
+   },
+   dataType: 'json',
+   success: function (data) {
+     if (data.menuadded) {
+       document.getElementById("items").style.visibility = "visible";
+       document.querySelector("#menusdiv").style.display = "grid";
+       document.querySelector("#toppings").style.display = "none";
+       $('#toppings').find('input[type="checkbox"]:checked').each(function(){
+         $(this).prop('checked', false);
+     });
+   }
+ },
+   error: function () {
+     alert('errorrrrrrr in adding oreder');
+   }
+ });
+}
+
+
+</script>
+
+<div class="">
+  {% csrf_token %}
+{% if type == "true" %}
+  <div class="typesdiv">
+    {% for type in types %}
+      <div>
+          <h5 style="text-align:center;" class="card-title" id="title">{{type}}</h5>
+          <a href="{% url 'selectionType' type.id %}"> <button style="margin-left:auto;margin-right:auto;display:flex;" type="button" value="{{type.id}}" class="btn btn-primary" id="typebtn" name="typebtn">Order!</button></a>
+      </div>
+      {% endfor %}
+  </div>
+{% else %}
+  <div id="menusdiv" class="gridmenu">
+    <h2 align="center" value="{{type.name}}" id="titleType">{{type}}</h2>
+      {% for m in menus %}
+        <div>
+          <table>
+            <tr style="width:100%; border-bottom: 1px solid grey;">
+              <td style="width:60%;text-align:left;">
+                <h5 style="text-align:left;display: inline-block;vertical-align: middle;margin: 10px 0;" class="card-title" id="title">{{m.name}}</h5>
+              </td>
+              <td style="width:20%;">
+                {% if m.price.sm != 0.0 %}
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="{{m.id}}lg" value="lg">
+                  <label class="form-check-label" for="inlineRadio1">{{m.price.lg}}$</label>
+                  <br>
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="{{m.id}}sm" value="sm">
+                  <label class="form-check-label" for="inlineRadio1">{{m.price.sm}}$</label>
+                  <br>
+                  <small id="{{m.id}}text" style="visibility:hidden;color:red;">oops</small>
+                {% else %}
+                  <label class="form-check-label">{{m.price.lg}}$</label>
+                  <br>
+                  <small>one size</small>
+                {% endif %}
+              </td>
+              <td style="width:20%;">
+                {% if m.price.sm != 0.0 %}
+                  <button style="width: 100%;display: inline-block;vertical-align: middle;margin: 10px 0;" type="button" class="btn btn-warning" value="{{m.name}}" id="{{m.id}}" name="menubtn">Add to cart</button>
+                {% else %}
+                  <button style="width: 100%;display: inline-block;vertical-align: middle;margin: 10px 0;" type="button" class="btn btn-warning" value="{{m.name}}" id="{{m.id}}" name="menubtnlg">Add to cart</button>
+                {% endif %}
+              </td>
+            </tr>
+          </table>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="gridmenu" id="toppings" style="display:none;">
+      {% if toppings %}
+      <h3 id="menutitle" style="text-align:center;"></h3>
+      <h5 id="titletoppings" style="text-align:center;"></h5>
+      <table style="width:35%;margin: auto;">
+        <fieldset>
+        {% for top in toppings %}
+              <tr style="border-bottom: 1px solid grey;padding-bottom:5px;">
+                <td style="width:20%;"><input type="checkbox" name="toppingbox" id="{{top.id}}" value="{{top.id}}"></td>
+                <td style="width:80%;"><label class="form-check-label" id="text{{top.id}}" for="inlineCheckbox1">{{top}}</label></td>
+              </tr>
+        {% endfor %}
+        </fieldset>
+      </table>
+        <div class="">
+          <button type="button" id="pizzaAdd" class="btn btn-warning" name="pizzaAdd">Add to the cart</button>
+        </div>
+      {% endif %}
+
+    </div>
+
+{% endif %}
+</div>
+{% endblock %}

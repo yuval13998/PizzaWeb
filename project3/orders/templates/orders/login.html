@@ -1,0 +1,76 @@
+{% extends "orders/layout.html" %}
+
+{% block title %}
+M&Y Pizza Login
+{% endblock %}
+{% block head %}
+{% endblock %}
+{% block body %}
+<div class="center_div" id="logindiv" style="width:45%;">
+  <h2 style="text-align:center;">Wellcom to M&Y Pizza!</h2>
+  <form class="" id="loginForm" action="{% url 'login' %}" method="post" style="width:100%;">
+    {% csrf_token %}
+    <div class="center_div" style="width:100%;">
+      Username:
+      <input type="text" class="form-control" name="username" style="width:100%;" id="username" value="" >
+    </div>
+    <div class="center_div" style="width:100%;">
+      Password:
+      <input type="password" class="form-control" name="pass" style="width:100%;" id="pass" value="">
+    </div>
+    {% if msg is not none %}
+    <small style="visibility:visible;color:red;" id="valid_text">{{msg}}</small>
+     {% else %}
+    <small style="visibility:hidden;color:red;" id="valid_text"></small>
+    {% endif %}
+        <div class="center_div">
+      <button type="button" class="btn btn-outline-primary btn-lg" style="margin-top: 10px;margin-left: auto;margin-right: auto;display: flex;" id="loginButton" name="button">Login!</button>
+    </div>
+  </form>
+</div>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+      document.querySelector('#loginButton').onclick = ()  => {
+        const username = document.querySelector('#username').value;
+        const pass = document.querySelector("#pass").value;
+        if (!emailEmpty(username)) {
+          document.querySelector('#username').style.borderColor = "#ced4da";
+          document.querySelector("#loginButton").className = "btn btn-outline-primary btn-lg";
+          if (!passEmpty(pass)) {
+            document.querySelector("#loginForm").submit();
+          }
+        }
+      };
+
+      function emailEmpty(username){
+        if (checkEmpty(username)) {
+          document.querySelector('#username').style.borderColor = "red";
+          document.querySelector("#valid_text").innerHTML ="username is requaired!";
+          document.querySelector("#valid_text").style.visibility="visible";
+          document.querySelector("#loginButton").className = "btn btn-outline-danger btn-lg";
+        }
+        return checkEmpty(username);
+      }
+      function passEmpty(pass){
+        if (checkEmpty(pass)) {
+          document.querySelector('#pass').style.borderColor = "red";
+          document.querySelector("#valid_text").innerHTML ="Password is requaired!";
+          document.querySelector("#valid_text").style.visibility="visible";
+          document.querySelector("#loginButton").className = "btn btn-outline-danger btn-lg";
+        }
+        return checkEmpty(pass);
+      }
+
+      function checkEmpty(str){
+        if (str == "") {
+          return true;
+        }
+        return false;
+      }
+
+  });
+</script>
+{% endblock %}

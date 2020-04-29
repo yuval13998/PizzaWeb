@@ -1,0 +1,37 @@
+{% extends "orders/layout.html" %}
+
+{% block title %}
+M&Y Pizza prof
+{% endblock %}
+{% block head %}
+{% endblock %}
+{% block body %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+
+  });
+</script>
+
+<div class="">
+  <h2 align="center">Hello {{user.first_name}} {{user.last_name}}!</h2>
+  <div class="" style="display:table;margin-left:auto;margin-right:auto;">
+    <ul>
+      {% for order in orders %}
+      {% if order.is_pay is False %}
+      <a href="{% url 'cart' %}"> <li style="">{{order}} {{order.timedate}}</li></a>
+      {% endif %}
+      {% endfor %}
+      <li style="color:grey;list-style:none;margin-top:8px;border-bottom: 1px solid grey;">Old Orders:</li>
+    {% for order in orders %}
+    {% if order.is_pay is True %}
+      <li style="color:grey;">{{order}} {{order.timedate}}</li>
+    {% endif %}
+    {% empty %}
+     <li style="color:grey;list-style:none;">{{msg}}</li>
+     {% endfor %}
+    </ul>
+    <a href="{% url 'selection' %}" style="text-decoration:none;"><button style="margin-left:auto;margin-right:auto;display:table;" type="button" class="btn btn-outline-info btn-lg" name="orderNow" id="orderNow">Order</button></a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,149 @@
+/*--------head of the page--------*/
+#headbg{
+  background-color: #6699ff;
+  text-align: left;
+}
+#logo{
+  background-color: #e6f7ff;
+  border-radius: 10%;
+  width: 100px;
+  align-content: center;
+  margin: 10px;
+}
+#logo:hover{
+  background-color: #7ec2e2;
+}
+#brand{
+  margin-top: 66px;
+  position: absolute;
+  left: 105px;
+  font-size: 20px;
+  font-family: cursive;
+  font-style: italic;
+}
+.logoImg{
+  width: 100px;
+  padding: 10px;
+  padding-top: 20px;
+}
+#logout{
+  margin-top: 60px;
+  position: absolute;
+  font-family: Bangers;
+}
+/*-------------- copyright ----------------------------------*/
+.copyright{
+  display: grid;
+  padding: 15px;
+  background-color: #6699ff;
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  position:fixed;
+  bottom:0;
+  width: 100%;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 9999;
+}
+
+#container {
+    position: relative;
+}
+
+/*---------------------- Login Pge ----------------------------*/
+.center_div{
+  display:table;
+  margin:auto;
+  margin-top: 3px;
+  width: 100%;
+}
+
+/*--------------------- valid pass -----------------------------*/
+.red{
+  color:red;
+}
+.green{
+  color:green;
+}
+
+/*-------------------------- home page --------------------------------*/
+.homeBody{
+   background-repeat: no-repeat;
+   background-size: cover;
+}
+@keyframes moving {
+  0%{
+    width: 60%;
+  }
+  100%{
+    width: 20%;
+    display:flex;
+  }
+}
+.logoAnimation{
+ align-items: center;
+ margin-left: auto;
+ margin-right: auto;
+ display: flex;
+ animation-name: moving;
+ animation-duration: 1.5s;
+ animation-fill-mode: forwards;
+}
+
+/*---------------------------- types view --------------------------*/
+.typesdiv{
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.typesdiv > div{
+  background-color: #b3ccff;
+  font-size: 15px;
+  margin: 20px;
+  padding: 20px;
+  width: 250px;
+  border-radius: 10px;
+}
+/*-------------------------- menu view -----------------------------*/
+.gridmenu {
+  display: grid;
+  grid-row-gap: 5px;
+  grid-template-columns: 100%;
+  padding: 10px;
+}
+
+.gridmenu > div{
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+  text-align:center;
+}
+
+.gridmenu > div > table{
+  width: 100%;
+}
+.gridmenu > div > table > tr > td > a {
+  right:0;
+  width: 100%;
+}
+
+.gridmenu > div > table > tr > td > a > button{
+  right:0;
+  width: 100%;
+}
+/*---------------------- cart page ----------------------------*/
+.carttable
+{
+  width: 100%;
+  margin: 10px;
+}
+
+.carttable > tr > td{
+  text-align: center;
+}
+
+td{
+  text-align: center;
+}

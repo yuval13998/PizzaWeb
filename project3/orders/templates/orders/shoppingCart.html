@@ -1,0 +1,196 @@
+{% extends "orders/layout.html" %}
+
+{% block title %}
+M&Y Pizza
+{% endblock %}
+{% block head %}
+{% endblock %}
+{% block body %}
+
+<script>
+
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById("items").style.visibility = "hidden";
+      document.addEventListener('click', event => {
+        const element = event.target;
+        if (element.name === 'plus') {
+          var id = element.value;
+          var quan = parseInt(document.getElementById("quantity"+id).innerHTML);
+          var sum_price = parseFloat(document.getElementById("price"+id).innerHTML);
+          document.getElementById("quantity"+id).innerHTML = quan + 1;
+          document.getElementById("price"+id).innerHTML = sum_price + price(sum_price,quan);
+          document.getElementById("totalprice").innerHTML = parseFloat(document.getElementById("totalprice").innerHTML)+price(sum_price,quan);
+          AddOrderItem(id);
+        }
+        if (element.name === 'min') {
+          var id = element.value;
+          var quan = parseInt(document.getElementById("quantity"+id).innerHTML);
+          var sum_price = parseFloat(document.getElementById("price"+id).innerHTML);
+          if (quan > 1) {
+            document.getElementById("quantity"+id).innerHTML = quan - 1;
+            document.getElementById("price"+id).innerHTML = sum_price - price(sum_price,quan);
+            document.getElementById("totalprice").innerHTML = parseFloat(document.getElementById("totalprice").innerHTML)-price(sum_price,quan);
+            MinOrderItem(id);
+          }
+          else {
+            var del = confirm("Do you want to delete this item?")
+            if (del) {
+              document.getElementById("tr"+id).style.display="none";
+              document.getElementById("totalprice").innerHTML = parseFloat(document.getElementById("totalprice").innerHTML)-sum_price;
+              deleteOrderItem(id);
+            }
+          }
+        }
+        if (element.name === 'button') {
+          var oid = element.id;
+          PayTheOrder(oid);
+        }
+
+        if (element.name === 'buttonmore') {
+          var oid = element.id;
+          element.name = 'buttonless';
+          ToppingInfo(oid);
+        }
+
+        else if (element.name === 'buttonless') {
+          var oid = element.id;
+          document.getElementById("trtopping"+oid).style.display = 'none';
+          element.name = 'buttonmore';
+          document.getElementById(oid).innerHTML = "+";
+        }
+    });
+
+  });
+
+  function price(price,quan){
+    var original = price/quan;
+    return original;
+  }
+
+  function deleteOrderItem(orderitem){
+      $.ajax({
+     url: 'http://127.0.0.1:8000/DeleteItem',
+     data: {
+       'orderItem':orderitem
+     },
+     dataType: 'json',
+     success: function (data) {
+     },
+     error: function () {
+       alert('error');
+     }
+   });
+  }
+  function AddOrderItem(orderitem){
+      $.ajax({
+     url: 'http://127.0.0.1:8000/AddItem',
+     data: {
+       'orderItem':orderitem
+     },
+     dataType: 'json',
+     success: function (data) {
+     },
+     error: function () {
+       alert('error');
+     }
+   });
+  }
+
+  function MinOrderItem(orderitem){
+      $.ajax({
+     url: 'http://127.0.0.1:8000/MinusItem',
+     data: {
+       'orderItem':orderitem
+     },
+     dataType: 'json',
+     success: function (data) {
+     },
+     error: function () {
+       alert('error');
+     }
+   });
+  }
+
+  function PayTheOrder(order){
+      $.ajax({
+     url: 'http://127.0.0.1:8000/PayOrder',
+     data: {
+       'order':order
+     },
+     success: function (data) {
+       document.getElementById("thankdiv").style.display = 'table';
+       document.getElementById("paydiv").style.display = 'none';
+       document.getElementById("msg").innerHTML = data.msg;
+       document.getElementById("items").style.visibility = "hidden";
+
+
+     },
+     dataType: 'json',
+     error: function () {
+     }
+   });
+  }
+
+  function ToppingInfo(oid){
+      $.ajax({
+     url: 'http://127.0.0.1:8000/ToppingsToMenu',
+     data: {
+       'oid':oid
+     },
+     success: function (data) {
+       document.getElementById("trtopping"+oid).style.display = 'table-row';
+       document.getElementById("tdtopping"+oid).innerHTML = data.msg;
+       document.getElementById(oid).innerHTML = "-";
+     },
+     dataType: 'json',
+     error: function () {
+       alert("sorry")
+     }
+   });
+  }
+
+</script>
+<div class="" id="paydiv" style="width:80%;">
+    <table class="carttable" >
+      <tr>
+        <td colspan="4"> <h2 name="orderid" id="{{order.id}}">{{order}}</h2></td>
+      </tr>
+      <tr>
+        <td style="width:50%;" colspan="2"> <h3>orders</h3></td>
+        <td style="width:25%;"><h3>price</h3></td>
+        <td style="width:25%;"><h3>quantity</h3></td>
+      </tr>
+      {% for oi in orderItem %}
+      <tr id="tr{{oi.id}}">
+        <td style="width:10%;"><button type="button" id="{{oi.id}}" name="buttonmore" class="btn btn-outline-info">+</button></td>
+        <td style="text-align:left;width:40%;">{{oi.menu.name}}</td>
+        <td style="width:25%;"><span id="price{{oi.id}}">{{oi.sum_price}}</span>$</td>
+        <td style="width:25%;"><span id="quantity{{oi.id}}">{{oi.quantity}}</span>
+          <br>
+          <button type="button" class="btn btn-outline-dark" value="{{oi.id}}"style="width:20px;text-align:center;padding:0;" name="plus" id="p{{oi.id}}">+</button>
+          <button class="btn btn-outline-dark" type="button" value="{{oi.id}}" style="width:20px;text-align:center;padding:0;" name="min" id="m{{oi.id}}" >-</button>
+        </td>
+      </tr>
+      <tr id="trtopping{{oi.id}}" style="display:none;">
+        <td colspan="4" style="text-align:center;"> <h6 style="text-align:center;" id="tdtopping{{oi.id}}"></h6> </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4"> <h6> sorry you dont order anything yet </h6></td>
+      </tr>
+      {% endfor %}
+      {% if orderItem %}
+      <tr>
+        <td  style="width:50%;"> <h5 style="float:right;">Total Price: <span id="totalprice">{{order.sum_price}}</span>$ </h5></td>
+        <td colspan="3" style="width:50%;"> <button type="button" id="{{order.id}}" style="float:left;" class="btn btn-success" name="button">Finish and pay</button>
+        <a href="{% url 'selection' %}"><button type="button"  style="float:left;margin-left:5px;" class="btn btn-success" name="selection">Back to the Menu</button></a> </td>
+      </tr>
+      {% endif %}
+    </table>
+  </div>
+  <div class="" id="thankdiv" style="display:none;">
+    <h1 id="msg" style="text-align:center;"></h1>
+    <a href="{% url 'profile' %}" style="display:table;margin-left:auto;margin-right:auto;" class="btn btn-outline-info">Go To Your Profile</a>
+  </div>
+{% endblock %}
