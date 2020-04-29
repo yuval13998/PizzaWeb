@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 function addMenuOrder(menuid,islg){
     $.ajax({
-   url: 'http://127.0.0.1:8000/addMenutoOrder',
+   url: '/addMenutoOrder',
    data: {
      'menuid':menuid,
      'islg':islg
@@ -144,7 +144,7 @@ function addMenuOrder(menuid,islg){
 
 function AddPizzaOrder(menuid,islg,toppings){
     $.ajax({
-   url: 'http://127.0.0.1:8000/AddPizzaOrder',
+   url: '/AddPizzaOrder',
    data: {
      'menuid':menuid,
      'islg':islg,

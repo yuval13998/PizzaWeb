@@ -70,7 +70,7 @@ M&Y Pizza
 
   function deleteOrderItem(orderitem){
       $.ajax({
-     url: 'http://127.0.0.1:8000/DeleteItem',
+     url: '/DeleteItem',
      data: {
        'orderItem':orderitem
      },
@@ -84,7 +84,7 @@ M&Y Pizza
   }
   function AddOrderItem(orderitem){
       $.ajax({
-     url: 'http://127.0.0.1:8000/AddItem',
+     url: '/AddItem',
      data: {
        'orderItem':orderitem
      },
@@ -99,7 +99,7 @@ M&Y Pizza
 
   function MinOrderItem(orderitem){
       $.ajax({
-     url: 'http://127.0.0.1:8000/MinusItem',
+     url: '/MinusItem',
      data: {
        'orderItem':orderitem
      },
@@ -114,7 +114,7 @@ M&Y Pizza
 
   function PayTheOrder(order){
       $.ajax({
-     url: 'http://127.0.0.1:8000/PayOrder',
+     url: '/PayOrder',
      data: {
        'order':order
      },
@@ -134,7 +134,7 @@ M&Y Pizza
 
   function ToppingInfo(oid){
       $.ajax({
-     url: 'http://127.0.0.1:8000/ToppingsToMenu',
+     url: '/ToppingsToMenu',
      data: {
        'oid':oid
      },
