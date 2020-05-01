@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!is_username_taken) {
               document.querySelector("#firstdata").style.display = "none";
               document.querySelector("#seconddata").style.display = "";
+              document.querySelector("#valid_username").style.visibility = "hidden";
             }
             else {
               document.querySelector("#valid_username").style.visibility = "visible";
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             }
         }
-      };
+      }};
       document.querySelector("#registerBtn").onclick = () => {
         if (validPass()) {
           if (checkPass()) {
@@ -33,6 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }
       };
+      document.querySelector("#backbtn").onclick = () => {
+        document.querySelector("#firstdata").style.display = "";
+        document.querySelector("#seconddata").style.display = "none";
+      }
 
       document.querySelector("#password").onkeyup = () =>{
         validPass();
@@ -131,15 +136,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return valid;
       }
 
-}
+
     });
     function userisexist(){
       if (document.querySelector("#username").value != "") {
         validUsername(document.querySelector("#username").value);
-      }
-      else {
-        document.querySelector("#valid_username").innerHTML = "you have to fill username";
-        document.querySelector("#valid_username").style.visibility = "visible";
       }
     }
     function validUsername(username){
@@ -200,8 +201,9 @@ document.addEventListener('DOMContentLoaded', () => {
     <small  id="passtext">Password must contain:<small id="up" class="red">Uppercase</small>,<small class="red" id="low">Lowercase</small>,<small class="red" id="num">Numbers</small>, <small class="red" id="min">Min 8 charecter</small></small>
     <br>
     <small style="visibility:hidden;color:red;" id="valid_pass"></small>
-    <div class="center_div">
-      <button type="button" class="btn btn-outline-primary" style="margin-left:auto;margin-right:auto;display:flex;margin-top:10px;" name="registerBtn" id="registerBtn">Sign Up!</button>
+    <div class="center_div" style="display:flex;">
+      <button type="button" class="btn btn-outline-primary" style="margin-left:auto;margin-right:5px;display:table;margin-top:10px;" name="registerBtn" id="registerBtn">Sign Up!</button>
+      <button type="button" class="btn btn-outline-secondary" style="margin-left:5px;margin-right:auto;display:table;margin-top:10px;" name="backbtn" id="backbtn">Back></button>
     </div>
   </div>
 </form>

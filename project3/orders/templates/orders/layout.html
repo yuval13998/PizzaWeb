@@ -2,9 +2,10 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>{% block title %}{% endblock %}</title>
-    {% block head %}{% endblock %}
     {% load static %}
+    <title><link rel="shortcut icon" href="{% static "orders/images/logo.png" %}" />{% block title %}{% endblock %}</title>
+    {% block head %}{% endblock %}
+
 
     <link rel="stylesheet" href="{% static "orders/css/cssproject3.css" %}" >
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -20,7 +21,7 @@
 
       function CheckCartEmpty(){
           $.ajax({
-         url: 'http://127.0.0.1:8000/CheckCartEmpty',
+         url: '/CheckCartEmpty',
          data: {
          },
          dataType: 'json',
@@ -30,9 +31,11 @@
            }
          },
          error: function () {
-           document.querySelector("#items").style.visibility = "hidden";
+           if (document.querySelector("#items") != null) {
+             document.querySelector("#items").style.visibility = "hidden";
          }
-       });
+       }
+     });
       }
     </script>
 

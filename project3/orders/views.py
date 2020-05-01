@@ -55,6 +55,7 @@ def login(request):
         return render(request,"orders/login.html",{"msg":"username or password are wrong..."})
 
 @login_required(login_url='login')
+
 def logout(request):
     auth_logout(request)
     return render(request,"orders/homepage.html")
@@ -158,12 +159,14 @@ def addMenutoOrder(request):
             if OrderItem.objects.filter(menu=menu,islg=True,order=order).exists():
                 oi = OrderItem.objects.get(menu=menu,islg=True,order=order)
                 oi.quantity += 1
-            oi = OrderItem(menu=menu,quantity=1,islg=True,sum_price=menu.price.lg,order=order)
+            else:
+                oi = OrderItem(menu=menu,quantity=1,islg=True,sum_price=menu.price.lg,order=order)
         else:
             if OrderItem.objects.filter(menu=menu,islg=False,order=order).exists():
                 oi = OrderItem.objects.get(menu=menu,islg=False,order=order)
                 oi.quantity += 1
-            oi = OrderItem(menu=menu,quantity=1,islg=False,sum_price=menu.price.sm,order=order)
+            else:
+                oi = OrderItem(menu=menu,quantity=1,islg=False,sum_price=menu.price.sm,order=order)
         oi.save()
         order.sum_price += oi.sum_price
         order.save()
@@ -302,7 +305,10 @@ def CheckCartEmpty(request):
     except User.DoesNotExist:
         raise Http404("User does not exist")
     except Order.DoesNotExist:
-        raise Http404("Order does not exist")
+            data = {
+            "full":False
+            }
+            return JsonResponse(data)
     except OrderItem.DoesNotExist:
         items = []
     if order.is_pay:

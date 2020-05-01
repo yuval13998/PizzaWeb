@@ -20,6 +20,7 @@ urlpatterns = [
     path("CheckCartEmpty",views.CheckCartEmpty,name="CheckCartEmpty"),
     path("AddPizzaOrder",views.AddPizzaOrder,name="AddPizzaOrder"),
     path("ToppingsToMenu",views.ToppingsToMenu,name="ToppingsToMenu"),
+    path("",views.homepage,name="homepage"),
 
 
 ]

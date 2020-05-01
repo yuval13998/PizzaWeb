@@ -71,8 +71,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (element.name === 'menubtnlg') {
       var id = element.id;
-      element.className = 'btn btn-outline-success';
-      addMenuOrder(id,"true");
+      if (element.className == 'btn btn-outline-success') {
+        addMenuOrder(id,"true");
+      }
+      else {
+        element.className = 'btn btn-outline-success';
+        addMenuOrder(id,"true");
+      }
+
     }
 
     if (element.name === 'toppingbox') {
@@ -98,26 +104,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   });
 
-
-  document.querySelector("#pizzaAdd").onclick = ()  => {
-    var len = $('#toppings').find('input[type="checkbox"]:checked').length;
-    if(limit > len){
-      let x = limit-len;
-      alert("sellect "+x+" more toppings");
-    }
-    else if (limit == len) {
-      var id = document.querySelector("#menutitle").value;
-      if (islg) {
-        AddPizzaOrder(id,"true",topps);
-        topps = [];
+  if (document.querySelector("#pizzaAdd") != null) {
+    document.querySelector("#pizzaAdd").onclick = ()  => {
+      var len = $('#toppings').find('input[type="checkbox"]:checked').length;
+      if(limit > len){
+        let x = limit-len;
+        alert("sellect "+x+" more toppings");
       }
-      else {
-        AddPizzaOrder(id,"false",topps);
-        topps = [];
-      }
+      else if (limit == len) {
+        var id = document.querySelector("#menutitle").value;
+        if (islg) {
+          AddPizzaOrder(id,"true",topps);
+          topps = [];
+        }
+        else {
+          AddPizzaOrder(id,"false",topps);
+          topps = [];
+        }
 
+      }
     }
   }
+
 
 });
 function addMenuOrder(menuid,islg){
